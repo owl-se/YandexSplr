@@ -14,27 +14,21 @@ public class YandexSpellerAnswer {
     @SerializedName("code")
     @Expose
     public Integer code;
-
     @SerializedName("pos")
     @Expose
     public Integer pos;
-
     @SerializedName("row")
     @Expose
     public Integer row;
-
     @SerializedName("col")
     @Expose
     public Integer col;
-
     @SerializedName("len")
     @Expose
     public Integer len;
-
     @SerializedName("word")
     @Expose
     public String word;
-
     @SerializedName("s")
     @Expose
     public List<String> s = new ArrayList<String>();

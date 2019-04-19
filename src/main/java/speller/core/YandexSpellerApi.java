@@ -15,7 +15,9 @@ import speller.utils.SpellerConstants;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.Matchers.lessThan;
 
@@ -24,6 +26,7 @@ public class YandexSpellerApi {
     private YandexSpellerApi() {}
 
     private HashMap<String, String> params = new HashMap<String, String>();
+    private HashMap<String, String> queryParams = new HashMap<>();
 
     public static class ApiBuilder {
         YandexSpellerApi yandexSpellerApi;
@@ -33,7 +36,7 @@ public class YandexSpellerApi {
         }
 
         public ApiBuilder text(String text) {
-            yandexSpellerApi.params.put(SpellerConstants.PARAM_TEXT, text);
+            yandexSpellerApi.queryParams.put(SpellerConstants.PARAM_TEXT, text);
             return this;
         }
 
@@ -48,8 +51,16 @@ public class YandexSpellerApi {
         }
 
         public Response callApi() {
-            return RestAssured.with()
-                    .queryParam(yandexSpellerApi.params.toString())
+            //System.out.println("s:" + toFormattedString(yandexSpellerApi.queryParams));
+            return RestAssured.given()
+                    .contentType(ContentType.JSON)
+                    .accept(ContentType.JSON)
+                    .header("custom header1", "header1.value")
+                    .urlEncodingEnabled(false)
+                    .queryParam(toFormattedString(yandexSpellerApi.queryParams))
+                    .params(yandexSpellerApi.params)
+                    .and()
+                    .body("some body lol")
                     .log().all()
                     .get(SpellerConstants.YANDEX_SPELLER_API_URI).prettyPeek();
         }
@@ -83,4 +94,10 @@ public class YandexSpellerApi {
                 .setBaseUri(SpellerConstants.YANDEX_SPELLER_API_URI)
                 .build();
    }
+
+    public static String toFormattedString(Map<String,String> map) {
+        return map.entrySet().stream()
+                .map(e -> String.format("%s=%s", e.getKey(), e.getValue()))
+                .collect(Collectors.joining(", "));
+    }
 }
