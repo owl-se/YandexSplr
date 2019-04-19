@@ -8,4 +8,15 @@ public class SpellerConstants {
     public static final String PARAM_OPTION = "options";
     public static final String PARAM_LANG = "lang";
     public static final String QUOTES = "\"";
+
+    public enum Language {
+        RU("ru"),
+        UK("uk"),
+        EN("en");
+        public String languageCode;
+
+        private Language(String lang) {
+            this.languageCode = lang;
+        }
+    }
 }
