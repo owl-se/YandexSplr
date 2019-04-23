@@ -7,21 +7,32 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 
 import org.apache.http.HttpStatus;
+import org.junit.Before;
 import org.junit.Test;
 
 import speller.core.YandexSpellerApi;
+import speller.utils.Options;
 import speller.utils.SpellerConstants;
+import speller.utils.Utils;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.lessThan;
+import static org.junit.Assert.assertTrue;
 import static speller.utils.SpellerConstants.*;
 import static org.hamcrest.Matchers.*;
 import static speller.testData.TestYandexData.*;
 import static speller.core.YandexSpellerApi.succesResponse;
 
 public class YandexSpellerJsonTest {
+
+    private Utils utils;
+
+    @Before
+    public void setUp() {
+        utils = new Utils();
+    }
 
     @Test()
     public void simpleSpellerApiCall() {
@@ -49,7 +60,7 @@ public class YandexSpellerJsonTest {
     }
 
     @Test
-    public void wrongWordEn() {
+    public void tc1_wrongWordEn() {
         YandexSpellerApi.with()
                 .text(WRONG_WORD_EN)
                 .language(Language.EN.toString())
@@ -64,32 +75,56 @@ public class YandexSpellerJsonTest {
     }
 
     @Test
-    public void wrongWordRu() {
-
-        RestAssured
-                .given((YandexSpellerApi.baseRequestConf()))
-                        .param(SpellerConstants.PARAM_TEXT, WRONG_WORD_RU)
-                        .get().prettyPeek()
-                        .then()
-                .assertThat()
-                .contentType(ContentType.JSON)
-                .body(allOf(
-                        containsString("\"code\":1"),
-                        containsString(CORRECT_WORD_RU)
-                ));
-
-
-
-/*        YandexSpellerApi.with()
-                .text(WRONG_WORD_RU)
-                .language(Language.RU.toString())
+    public void tc2_capitalLetterEn() {
+        YandexSpellerApi.with()
+                .text(WRONG_CAPITAL_EN)
+                .language(Language.EN.toString())
                 .callApi()
-                .then().specification(succesResponse())
+                .then()
                 .assertThat()
-                .contentType(ContentType.JSON)
                 .body(allOf(
-                        containsString("\"code\":1"),
-                        containsString(CORRECT_WORD_RU)
-                        ));*/
+                        stringContainsInOrder(Arrays.asList(WRONG_CAPITAL_EN,
+                                CORRECT_CAPITAL_EN)),
+                        containsString("\"code\":3")));
     }
+
+    @Test
+    public void tc3_wordWithDigitsEn() {
+        YandexSpellerApi.with()
+                .text(WRONG_DIGTIS_EN)
+                .language(Language.EN.toString())
+                .callApi()
+                .then()
+                .assertThat()
+                .body(allOf(
+                        stringContainsInOrder(Arrays.asList(WRONG_DIGTIS_EN,
+                                CORRECT_DIGTIS_EN)),
+                        containsString("\"code\":1")));
+    }
+
+    @Test
+    public void tc4_wordWithDigitsIgnoreEn() {
+        List<YandexSpellerAnswer> answers =
+                YandexSpellerApi.getYandexSpellerAnswer(
+                        YandexSpellerApi.with().text(WRONG_DIGTIS_IGNORE_EN)
+                                .language(Language.EN.toString())
+                                .option(Options.IGNORE_DIGITS.getCode())
+                                .callApi());
+        assertTrue(utils.verifyJsonResponse(answers,"s",CORRECT_DIGTIS_IGNORE_EN));
+    }
+
+    @Test
+    public void tc5_capitalWordEn() {
+        YandexSpellerApi.with()
+                .text(WRONG_CAPITAL_WORD_EN)
+                .language(Language.EN.toString())
+                .callApi()
+                .then()
+                .assertThat()
+                .body(allOf(
+                        stringContainsInOrder(Arrays.asList(WRONG_CAPITAL_WORD_EN,
+                                CORRECT_CAPITAL_WORD_EN)),
+                        containsString("\"code\":1")));
+    }
+
 }

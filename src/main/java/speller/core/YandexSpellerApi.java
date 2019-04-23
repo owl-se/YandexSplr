@@ -36,7 +36,7 @@ public class YandexSpellerApi {
         }
 
         public ApiBuilder text(String text) {
-            yandexSpellerApi.queryParams.put(SpellerConstants.PARAM_TEXT, text);
+            yandexSpellerApi.params.put(SpellerConstants.PARAM_TEXT, text);
             return this;
         }
 
@@ -54,10 +54,8 @@ public class YandexSpellerApi {
             //System.out.println("s:" + toFormattedString(yandexSpellerApi.queryParams));
             return RestAssured.given()
                     .contentType(ContentType.JSON)
-                    .accept(ContentType.JSON)
-                    .header("custom header1", "header1.value")
-                    .urlEncodingEnabled(false)
-                    .queryParam(toFormattedString(yandexSpellerApi.queryParams))
+                    .urlEncodingEnabled(true)
+                    //.queryParam(toFormattedString(yandexSpellerApi.queryParams))
                     .params(yandexSpellerApi.params)
                     .and()
                     .body("some body lol")
