@@ -60,15 +60,15 @@ public class YandexSpellerJsonTest {
     }
 
     @Test
-    public void tc1_wrongWordEn() {
+    public void tc1_wrongWord() {
         YandexSpellerApi.with()
-                .text(WRONG_WORD_EN)
+                .text(WRONG_WORD)
                 .language(Language.EN.toString())
                 .callApi()
                 .then()
                 .assertThat()
                 .body(allOf(
-                        stringContainsInOrder(Arrays.asList(WRONG_WORD_EN,
+                        stringContainsInOrder(Arrays.asList(WRONG_WORD,
                                 "other","mother","smoother")),
                         containsString("\"code\":1"),
                         containsString("\"len\":7")));
@@ -77,28 +77,28 @@ public class YandexSpellerJsonTest {
     @Test
     public void tc2_capitalLetterEn() {
         YandexSpellerApi.with()
-                .text(WRONG_CAPITAL_EN)
+                .text(WRONG_CAPITAL)
                 .language(Language.EN.toString())
                 .callApi()
                 .then()
                 .assertThat()
                 .body(allOf(
-                        stringContainsInOrder(Arrays.asList(WRONG_CAPITAL_EN,
-                                CORRECT_CAPITAL_EN)),
+                        stringContainsInOrder(Arrays.asList(WRONG_CAPITAL,
+                                CORRECT_CAPITAL)),
                         containsString("\"code\":3")));
     }
 
     @Test
     public void tc3_wordWithDigitsEn() {
         YandexSpellerApi.with()
-                .text(WRONG_DIGTIS_EN)
+                .text(WRONG_DIGTIS)
                 .language(Language.EN.toString())
                 .callApi()
                 .then()
                 .assertThat()
                 .body(allOf(
-                        stringContainsInOrder(Arrays.asList(WRONG_DIGTIS_EN,
-                                CORRECT_DIGTIS_EN)),
+                        stringContainsInOrder(Arrays.asList(WRONG_DIGTIS,
+                                CORRECT_DIGTIS)),
                         containsString("\"code\":1")));
     }
 
@@ -106,24 +106,103 @@ public class YandexSpellerJsonTest {
     public void tc4_wordWithDigitsIgnoreEn() {
         List<YandexSpellerAnswer> answers =
                 YandexSpellerApi.getYandexSpellerAnswer(
-                        YandexSpellerApi.with().text(WRONG_DIGTIS_IGNORE_EN)
+                        YandexSpellerApi.with().text(WRONG_DIGTIS_IGNORE)
                                 .language(Language.EN.toString())
                                 .option(Options.IGNORE_DIGITS.getCode())
                                 .callApi());
-        assertTrue(utils.verifyJsonResponse(answers,"s",CORRECT_DIGTIS_IGNORE_EN));
+        assertTrue(utils.verifyJsonResponse(answers,"s",CORRECT_DIGTIS_IGNORE));
     }
 
     @Test
     public void tc5_capitalWordEn() {
         YandexSpellerApi.with()
-                .text(WRONG_CAPITAL_WORD_EN)
+                .text(WRONG_CAPITAL_WORD)
                 .language(Language.EN.toString())
                 .callApi()
                 .then()
                 .assertThat()
                 .body(allOf(
-                        stringContainsInOrder(Arrays.asList(WRONG_CAPITAL_WORD_EN,
-                                CORRECT_CAPITAL_WORD_EN)),
+                        stringContainsInOrder(Arrays.asList(WRONG_CAPITAL_WORD,
+                                CORRECT_CAPITAL_WORD)),
+                        containsString("\"code\":1")));
+    }
+
+    @Test
+    public void tc6_wordWithSymbols() {
+        YandexSpellerApi.with()
+                .text(WRONG_WORD_WITH_SYMBOLS)
+                .language(Language.EN.toString())
+                .callApi()
+                .then()
+                .assertThat()
+                .body(allOf(
+                        stringContainsInOrder(Arrays.asList(WRONG_WORD_WITH_SYMBOLS,
+                                CORRECT_WORD_WITH_SYMBOLS)),
+                        containsString("\"code\":1")));
+    }
+
+    @Test
+    public void tc7_wordWithReplacedChar() {
+        YandexSpellerApi.with()
+                .text(WRONG_WORD_WITH_CHAR)
+                .language(Language.EN.toString())
+                .callApi()
+                .then()
+                .assertThat()
+                .body(allOf(
+                        stringContainsInOrder(Arrays.asList(WRONG_WORD_WITH_CHAR,
+                                CORRECT_WORD_WITH_CHAR)),
+                        containsString("\"code\":1")));
+    }
+
+    @Test
+    public void tc8_capitalLetterIgnore() {
+        YandexSpellerApi.with()
+                .text(WRONG_CAPITAL)
+                .language(Language.EN.toString())
+                .option(Options.IGNORE_CAPITALIZATION.getCode())
+                .callApi()
+                .then()
+                .assertThat()
+                .statusCode(HttpStatus.SC_OK);
+    }
+
+    @Test
+    public void tc9_multipleWords() {
+        YandexSpellerApi.with()
+                .text(WRONG_MULTIPLE_WORDS)
+                .language(Language.RU.toString())
+                .callApi()
+                .then()
+                .assertThat()
+                .body(allOf(
+                        stringContainsInOrder(Arrays.asList(WRONG_MULTIPLE_WORD,
+                                CORRECT_MULTIPLE_WORD)),
+                        containsString("\"code\":1"),
+                        containsString("\"pos\":5")),
+                        stringContainsInOrder(Arrays.asList(WRONG_MULTIPLE_WORD,
+                                CORRECT_MULTIPLE_WORD)),
+                        containsString("\"code\":1"),
+                        containsString("\"pos\":14"));
+    }
+
+    @Test
+    public void tc_10_multipleWordsWithCapital() {
+        YandexSpellerApi.with()
+                .text(WRONG_WORDS_WITH_CAPITALS)
+                .language(Language.EN.toString())
+                .callApi()
+                .then()
+                .assertThat()
+                .body(allOf(
+                        stringContainsInOrder(Arrays.asList(WRONG_WORDS_WITH_CAPITALS,
+                                CORRECT_WORD)),
+                        containsString("\"code\":1"),
+/*                        stringContainsInOrder(Arrays.asList(WRONG_WORDS_WITH_CAPITALS,
+                                CORRECT_CAPITAL)),
+                        containsString("\"code\":3"),*/
+                        stringContainsInOrder(Arrays.asList(WRONG_WORDS_WITH_CAPITALS,
+                                "moscow")),
                         containsString("\"code\":1")));
     }
 
