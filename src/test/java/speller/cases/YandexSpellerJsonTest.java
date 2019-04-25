@@ -195,13 +195,13 @@ public class YandexSpellerJsonTest {
                 .then()
                 .assertThat()
                 .body(allOf(
-                        stringContainsInOrder(Arrays.asList(WRONG_WORDS_WITH_CAPITALS,
+                        stringContainsInOrder(Arrays.asList("motherr",
                                 CORRECT_WORD)),
                         containsString("\"code\":1"),
-/*                        stringContainsInOrder(Arrays.asList(WRONG_WORDS_WITH_CAPITALS,
+                        stringContainsInOrder(Arrays.asList("london",
                                 CORRECT_CAPITAL)),
-                        containsString("\"code\":3"),*/
-                        stringContainsInOrder(Arrays.asList(WRONG_WORDS_WITH_CAPITALS,
+                        containsString("\"code\":3"),
+                        stringContainsInOrder(Arrays.asList("moscoww",
                                 "moscow")),
                         containsString("\"code\":1")));
     }
